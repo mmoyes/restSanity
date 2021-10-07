@@ -1,0 +1,36 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "restsanity-dpy"
+spec:
+  selector:
+    matchLabels:
+      app: "restsanity-app"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: "restsanity-app"
+    spec:
+      containers:
+        - name: "brud-auth"
+          image: cloud.canister.io:5000/brudtech/restsanity:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5001
+      imagePullSecrets:
+      - name: regcred            
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: "restsanity-svc"
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 5001
+  selector:
+    app: "restsanity-app"
